@@ -39,7 +39,16 @@ function textFrom(data: unknown) {
 function cleanFollowup(text: string) {
   const subject = text.match(/(?:^|\n)\s*Subject\s*:\s*(.+?)(?:\n|$)/i)?.[1]?.trim();
   const body = text.match(/(?:^|\n)\s*Body\s*:\s*([\s\S]*)/i)?.[1]?.trim();
-  if (subject && body) return `Subject: ${subject}\n\nBody:\n${body.replace(/^(analysis|thinking process|reasoning)\s*[:\-].*?(?=\n\n|$)/is, "").trim()}`;
+  if (subject && body) {
+  const cleanedBody = body
+    .replace(
+      /^(analysis|thinking process|reasoning)\s*[:\-][\s\S]*?(?=\n\n|$)/i,
+      ""
+    )
+    .trim();
+
+  return `Subject: ${subject}\n\nBody:\n${cleanedBody}`;
+}
   const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
   const useful = lines.filter(line => !/^(analysis|thinking process|reasoning|step \d+|constraints?|output format)\s*[:\-]?/i.test(line));
   return useful.slice(-12).join("\n");
